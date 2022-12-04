@@ -39,7 +39,8 @@ public class ProcessScheduling {
             }
             int currTime = 0;
             int maxWaitTime = 30;
-            int movedToPQ = -1;
+            int movedToPQPriority = -1;
+            int movedToPQPID = -1;
             int minPID = 0;
             int hiPRI = -1;
             int origDuration = 0;
@@ -47,22 +48,29 @@ public class ProcessScheduling {
             System.out.println("Maximum wait time = " + maxWaitTime +" ");
 
             HeapAdaptablePriorityQueue<Integer, Process> PQ  = new HeapAdaptablePriorityQueue<>();
+            HeapAdaptablePriorityQueue<Integer, Process> PQCopy  = new HeapAdaptablePriorityQueue<>();
 
-                /** The core scheduler function starts here.
-                 *
-                 */
+//            Entry<Integer, Process> blah = PQ.min();
+//            blah.getKey();
+
+
+            /** The core scheduler function starts here.
+             *
+             */
             while (P1.size()!=0 || PQ.size() !=0) {
                 for (int i=0;i<P1.size();i++) {
 //                    System.out.println("currTime is " + currTime);
 //                    System.out.println("Arrival Time is " + P1.get(i).getArrival_Time() + " PID " +
 //                            P1.get(i).getProcess_id() + " Priority " + P1.get(i).getPriority());
                     if (P1.get(i).getArrival_Time() <= currTime) {
-                        if (P1.get(i).getPriority() != movedToPQ) {
+                        if (P1.get(i).getPriority() != movedToPQPriority ||
+                                P1.get(i).getProcess_id()!=movedToPQPID) {
 //                            System.out.println(">>>>>Inserted Priority " + P1.get(i).getPriority());
                             PQ.insert(P1.get(i).getPriority(), P1.get(i));
 //                            System.out.println("current hiPri PID is " + PQ.min().getKey());
-                            movedToPQ = P1.get(i).getPriority();
-//                            System.out.println("moved to PQ " + movedToPQ);
+                            movedToPQPriority = P1.get(i).getPriority();
+                            movedToPQPID = P1.get(i).getProcess_id();
+//                            System.out.println("moved to PQ " + movedToPQPriority);
 //                            System.out.println("Size before remove is " + P1.size());
                             P1.remove(i);
                         }
@@ -83,24 +91,28 @@ public class ProcessScheduling {
 //                if (PQ.size() !=0 && PQ.min().getValue().getDuration() == 0) {
 //                    break;
 //                }
-
                 if(PQ.size() !=0 && PQ.min().getValue().getArrival_Time() <=currTime) {
-//                    for (int i=0;i<PQ.size();i++) {
-//                        System.out.println("arr time in PQ iter " + PQ.iterator().next().getValue().getArrival_Time());
-//                        System.out.println("other pri is " + PQ.iterator().next().getValue().getPriority());
-//                        System.out.println("min pri is " + PQ.min().getValue().getPriority());
-//                        if (PQ.iterator().next().getValue().getArrival_Time() + maxWaitTime >= maxWaitTime) {
-//                            PQ.iterator().next().getValue().setPriority(PQ.iterator().next().getValue().getPriority()-1);
-//                            System.out.println("Process " + PQ.iterator().next().getValue().getProcess_id()
-//                                    +" reached maximum wait time..." +" decreasing priority to " +
-//                                    PQ.iterator().next().getValue().getPriority());
-//                        }
-//                    }
+                    for(Entry<Integer,Process> walkPQ : PQ) {
+//                        System.out.println("Arr time for PID " + walkPQ.getValue().getProcess_id() + " is  " +
+//                                walkPQ.getValue().getArrival_Time());
+//                        System.out.println("currTime is " + currTime);
+                        if(walkPQ.getValue().getArrival_Time() + maxWaitTime == currTime) {
+                            walkPQ.getValue().setPriority(walkPQ.getValue().getPriority()-1);
+                            System.out.println("Process " + walkPQ.getValue().getProcess_id()
+                                    +" reached maximum wait time..." +" decreasing priority to " +
+                                    walkPQ.getValue().getPriority());
+//                            PQ.remove(Entry<Integer,Process> PQCopy);
+//                            Entry<Integer,Process> blah = PQ.removeMin();
+//                            PQ.remove(PQ.min().getValue().getPriority(),blah);
+                        }
+                    }
+                    System.out.println("min PID is " + PQ.min().getValue().getProcess_id());
                     System.out.println("Executed process ID:" + PQ.min().getValue().getProcess_id()
                             + ", at time " +currTime + " Remaining: " +
                             (PQ.min().getValue().getDuration()-1));
+
                     PQ.min().getValue().setDuration(PQ.min().getValue().getDuration()-1);
-                    PQ.min().getValue().setArrival_Time(PQ.min().getValue().getArrival_Time()+1);
+                    PQ.min().getValue().setArrival_Time(currTime);
                 }
                 if(PQ.size() !=0) {
                     if (PQ.min().getValue().getDuration()==0) {
@@ -118,6 +130,9 @@ public class ProcessScheduling {
                 }
                 currTime++;
             }
+            System.out.println("Finished running all processes at time " + (currTime-1));
+//            System.out.println("Average wait time: " + );
+//             41.3
         }
         catch (IOException e) {
             System.out.println("File not Found");
