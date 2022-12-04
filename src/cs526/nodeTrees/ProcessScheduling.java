@@ -98,11 +98,19 @@ public class ProcessScheduling {
 //                        System.out.println("currTime is " + currTime);
                         if(walkPQ.getValue().getArrival_Time() + maxWaitTime == currTime) {
                             walkPQ.getValue().setPriority(walkPQ.getValue().getPriority()-1);
+                            System.out.println("MinPID before replace is " + PQ.min().getValue().getProcess_id());
+                            Entry<Integer,Process> top = PQ.min();
+                            System.out.println("topPID is " + top.getValue().getProcess_id());
+                            System.out.println("pri reduced for PID " + walkPQ.getValue().getProcess_id() +
+                                    " with new priority " + walkPQ.getValue().getPriority());
+                            PQ.replaceKey(top,walkPQ.getKey());
+                            System.out.println("MinPID after replace is " + PQ.min().getValue().getProcess_id() +
+                                    " having Priority " +PQ.min().getValue().getPriority());
+                            System.out.println("Updated list is PID PRI "+walkPQ.getValue().getProcess_id() +"  " + walkPQ.getValue().getPriority());
                             System.out.println("Process " + walkPQ.getValue().getProcess_id()
                                     +" reached maximum wait time..." +" decreasing priority to " +
                                     walkPQ.getValue().getPriority());
 //                            PQ.remove(Entry<Integer,Process> PQCopy);
-//                            Entry<Integer,Process> blah = PQ.removeMin();
 //                            PQ.remove(PQ.min().getValue().getPriority(),blah);
                         }
                     }
