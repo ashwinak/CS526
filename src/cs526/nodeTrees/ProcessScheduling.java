@@ -99,8 +99,12 @@ public class ProcessScheduling {
                         if(walkPQ.getValue().getArrival_Time() + maxWaitTime == currTime) {
                             walkPQ.getValue().setPriority(walkPQ.getValue().getPriority()-1);
                             heapPriChange.add(walkPQ);
+//                            System.out.println("size of heappriChange is " + heapPriChange.size());
                             for (int i=0;i<heapPriChange.size();i++) {
-                                PQ.replaceKey(heapPriChange.get(i),heapPriChange.get(i).getValue().getPriority());
+//                                System.out.println("The key is " + heapPriChange.get(i).getValue());
+                                if(heapPriChange.get(i).getValue().getDuration() !=0) {
+                                    PQ.replaceKey(heapPriChange.get(i),heapPriChange.get(i).getValue().getPriority());
+                                }
                             }
 //                            System.out.println("Process  PID : arrtime " +walkPQ.getValue().getProcess_id() +
 //                                    " : " + walkPQ.getValue().getArrival_Time());
@@ -109,7 +113,7 @@ public class ProcessScheduling {
                                     walkPQ.getValue().getPriority());
                             if(walkPQ.getValue().getProcess_id() != PQ.min().getValue().getProcess_id()) {
                                 PQWaitTime = walkPQ.getValue().getArrival_Time()+maxWaitTime;
-                                System.out.println("PQwt time is " +PQWaitTime);
+//                                System.out.println("PQwt time is " +PQWaitTime);
                                 walkPQ.getValue().setArrival_Time(PQWaitTime);
 //                                System.out.println("new arr time " + walkPQ.getValue().getArrival_Time());
                             }
