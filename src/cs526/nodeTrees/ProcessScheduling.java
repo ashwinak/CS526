@@ -14,6 +14,8 @@ public class ProcessScheduling {
         try {
             ArrayList<Process> P1 = new ArrayList<>();
             ArrayList<Process> P1Copy = new ArrayList<>();
+            ArrayList<Entry<Integer,Process>> heapPriChange = new ArrayList<>();
+
 
             File proc_Input = new File("src/cs526/nodeTrees/process_scheduling_input.txt");
             Scanner s = new Scanner(proc_Input);
@@ -41,10 +43,9 @@ public class ProcessScheduling {
             int maxWaitTime = 30;
             int movedToPQPriority = -1;
             int movedToPQPID = -1;
-            int minPID = 0;
             int hiPRI = -1;
-            int origDuration = 0;
-            int origArrivalTime = 0;
+            int PQWaitTime =0;
+
             System.out.println("Maximum wait time = " + maxWaitTime +" ");
 
             HeapAdaptablePriorityQueue<Integer, Process> PQ  = new HeapAdaptablePriorityQueue<>();
@@ -78,10 +79,10 @@ public class ProcessScheduling {
                     if(PQ.size()!=0 && PQ.min().getKey() != hiPRI) {
                         hiPRI = PQ.min().getKey();
                         System.out.println("Now running Process id = " + PQ.min().getValue().getProcess_id());
-                        for (i=0;i< P1Copy.size();i++) {
-                            if (P1Copy.get(i).getProcess_id() == PQ.min().getValue().getProcess_id()) {
-                                System.out.println("Arrival = " + P1Copy.get(i).getArrival_Time());
-                                System.out.println("Duration = " + P1Copy.get(i).getDuration());
+                        for (int j=0;j< P1Copy.size();j++) {
+                            if (P1Copy.get(j).getProcess_id() == PQ.min().getValue().getProcess_id()) {
+                                System.out.println("Arrival = " + P1Copy.get(j).getArrival_Time());
+                                System.out.println("Duration = " + P1Copy.get(j).getDuration());
                             }
                         }
                         System.out.println("Run time left = " + PQ.min().getValue().getDuration());
@@ -91,34 +92,44 @@ public class ProcessScheduling {
 //                if (PQ.size() !=0 && PQ.min().getValue().getDuration() == 0) {
 //                    break;
 //                }
-                if(PQ.size() !=0 && PQ.min().getValue().getArrival_Time() <=currTime) {
+                if(PQ.size() !=0) { //&& PQ.min().getValue().getArrival_Time() <=currTime
                     for(Entry<Integer,Process> walkPQ : PQ) {
-//                        System.out.println("Arr time for PID " + walkPQ.getValue().getProcess_id() + " is  " +
-//                                walkPQ.getValue().getArrival_Time());
-//                        System.out.println("currTime is " + currTime);
+//                        System.out.println("Arr time for PID# " +walkPQ.getValue().getProcess_id()+ " "
+//                                + walkPQ.getValue().getArrival_Time());
                         if(walkPQ.getValue().getArrival_Time() + maxWaitTime == currTime) {
                             walkPQ.getValue().setPriority(walkPQ.getValue().getPriority()-1);
-                            System.out.println("MinPID before replace is " + PQ.min().getValue().getProcess_id());
-                            Entry<Integer,Process> top = PQ.min();
-                            System.out.println("topPID is " + top.getValue().getProcess_id());
-                            System.out.println("pri reduced for PID " + walkPQ.getValue().getProcess_id() +
-                                    " with new priority " + walkPQ.getValue().getPriority());
-                            PQ.replaceKey(top,walkPQ.getKey());
-                            System.out.println("MinPID after replace is " + PQ.min().getValue().getProcess_id() +
-                                    " having Priority " +PQ.min().getValue().getPriority());
-                            System.out.println("Updated list is PID PRI "+walkPQ.getValue().getProcess_id() +"  " + walkPQ.getValue().getPriority());
+                            heapPriChange.add(walkPQ);
+                            for (int i=0;i<heapPriChange.size();i++) {
+                                PQ.replaceKey(heapPriChange.get(i),heapPriChange.get(i).getValue().getPriority());
+                            }
+//                            System.out.println("Process  PID : arrtime " +walkPQ.getValue().getProcess_id() +
+//                                    " : " + walkPQ.getValue().getArrival_Time());
                             System.out.println("Process " + walkPQ.getValue().getProcess_id()
-                                    +" reached maximum wait time..." +" decreasing priority to " +
+                                    + " reached maximum wait time..." + " decreasing priority to " +
                                     walkPQ.getValue().getPriority());
-//                            PQ.remove(Entry<Integer,Process> PQCopy);
-//                            PQ.remove(PQ.min().getValue().getPriority(),blah);
+                            if(walkPQ.getValue().getProcess_id() != PQ.min().getValue().getProcess_id()) {
+                                PQWaitTime = walkPQ.getValue().getArrival_Time()+maxWaitTime;
+                                System.out.println("PQwt time is " +PQWaitTime);
+                                walkPQ.getValue().setArrival_Time(PQWaitTime);
+//                                System.out.println("new arr time " + walkPQ.getValue().getArrival_Time());
+                            }
+                            if(PQ.size()!=0 && PQ.min().getKey() != hiPRI) {
+                                hiPRI = PQ.min().getKey();
+                                System.out.println("Now running Process id = " + PQ.min().getValue().getProcess_id());
+                                for (int i=0;i< P1Copy.size();i++) {
+                                    if (P1Copy.get(i).getProcess_id() == PQ.min().getValue().getProcess_id()) {
+                                        System.out.println("Arrival = " + P1Copy.get(i).getArrival_Time());
+                                        System.out.println("Duration = " + P1Copy.get(i).getDuration());
+                                    }
+                                }
+                                System.out.println("Run time left = " + PQ.min().getValue().getDuration());
+                                System.out.println("at time " + currTime);
+                            }
                         }
                     }
-                    System.out.println("min PID is " + PQ.min().getValue().getProcess_id());
                     System.out.println("Executed process ID:" + PQ.min().getValue().getProcess_id()
                             + ", at time " +currTime + " Remaining: " +
                             (PQ.min().getValue().getDuration()-1));
-
                     PQ.min().getValue().setDuration(PQ.min().getValue().getDuration()-1);
                     PQ.min().getValue().setArrival_Time(currTime);
                 }
