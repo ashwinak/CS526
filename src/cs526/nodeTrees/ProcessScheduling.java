@@ -1,6 +1,7 @@
 /**
  * Diff checker analysis for sample 1 : https://www.diffchecker.com/9SXJ7LI7/
  * Diff checker analysis for sample 2 : https://www.diffchecker.com/rrXtGrEc
+ * Diff checker analysis for sample 3 : https://www.diffchecker.com/Z25pJNF1
  */
 package cs526.nodeTrees;
 
