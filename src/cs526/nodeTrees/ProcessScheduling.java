@@ -49,7 +49,7 @@ public class ProcessScheduling {
             int movedToPQPID = -1;
             int hiPRI = -1;
             int PQWaitTime =0;
-
+            int totalPQWaitTime = 0;
             System.out.println("Maximum wait time = " + maxWaitTime +" ");
 
             HeapAdaptablePriorityQueue<Integer, Process> PQ  = new HeapAdaptablePriorityQueue<>();
@@ -119,6 +119,7 @@ public class ProcessScheduling {
                                 PQWaitTime = walkPQ.getValue().getArrival_Time()+maxWaitTime;
 //                                System.out.println("PQwt time is " +PQWaitTime);
                                 walkPQ.getValue().setArrival_Time(PQWaitTime);
+                                totalPQWaitTime++;
 //                                System.out.println("new arr time " + walkPQ.getValue().getArrival_Time());
                             }
                             if(PQ.size()!=0 && PQ.min().getKey() != hiPRI) {
@@ -158,7 +159,7 @@ public class ProcessScheduling {
                 currTime++;
             }
             System.out.println("Finished running all processes at time " + (currTime-1));
-//            System.out.println("Average wait time: " + );
+            System.out.println("Average wait time: " + (totalPQWaitTime*maxWaitTime)/totalPQWaitTime);
 //             41.3
         }
         catch (IOException e) {
