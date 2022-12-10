@@ -33,7 +33,8 @@ public class Hw5_p7 {
                 }
             };
             Integer[] randomArrMerge = RandInteger(1000000, n);
-
+            
+    
             long startTime1 = System.currentTimeMillis();
             mergeSort(randomArrMerge,Comp);
             long endTime1 = System.currentTimeMillis();
