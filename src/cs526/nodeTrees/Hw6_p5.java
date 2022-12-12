@@ -11,7 +11,6 @@ public class Hw6_p5 {
      * A new scanner object reads the file and populates arralist of nodes with each node
      * pointing to another array list of followees. This method creates the data structure adjacency list
      * along with a nodeFollow class.
-     *
      */
     public static void main(String[] args) throws FileNotFoundException {
         ArrayList<nodeFollow> follower= new ArrayList<>();
