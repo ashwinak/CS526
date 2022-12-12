@@ -8,8 +8,16 @@ public class Hw5_p7 {
         int n = 10000;
         for (int i=0;i<10;i++) {
             int[] randomArr = Rand(1000000, n);
+//
+//            for (int j=0;j<randomArr.length;j++) {
+//                System.out.println(randomArr[j]);
+//            }
 
             /** Insertion Sort
+             * The following code inputs an array of random integers of size 10K between 1 to 1M to
+             * insertion sort method. This method does inplace sorting and this can be verified
+             * by printing the random array in a loop before and after calling the method.
+             *
              *
              */
             long startTime = System.currentTimeMillis();
@@ -22,7 +30,9 @@ public class Hw5_p7 {
                     +elapsedTime);
 
             /** Merge Sort
-             *
+             * The following code inputs an array of random integers of size 10K between 1 to 1M to
+             * merge sort method. This method does inplace sorting and this can be verified
+             *  by printing the random array in a loop before and after calling the method.
              *
              */
 
@@ -44,6 +54,10 @@ public class Hw5_p7 {
 
             /**
              *  Quick Sort
+             *
+             *  The following code inputs an array of random integers of size 10K between 1 to 1M to
+             *  quick sort method. This method does inplace sorting and this can be verified
+             *  by printing the random array in a loop before and after calling the method.
              */
             Comparator<Integer> Comp1= new Comparator<Integer>() {
                 @Override
@@ -63,6 +77,9 @@ public class Hw5_p7 {
 
             /**
              * Heap Sort
+             * The following code inputs an array of random integers of size 10K between 1 to 1M to
+             * heap sort method. This method does inplace sorting and this can be verified
+             * by printing the random array in a loop before and after calling the method.
              */
             int[] randomArrHeap = Rand(1000000, n);
             long startTime2 = System.currentTimeMillis();
@@ -72,11 +89,21 @@ public class Hw5_p7 {
 
             System.out.println("Time taken for heap Sort of size " + n + " is "
                     +elapsedTime2);
-
             n=n+10000;
         }
-
     }
+
+    /**
+     *
+     * The method below takes an array of integers as input and performs in place sorting.
+     * The method uses two loops outer and inner that makes it O(n^2) run time.
+     *
+     * Here each integer in cur is compared with elements in the array in linear fashion.
+     * The swap happens in the while loop when previous element is greater than next element cur.
+     *
+     */
+
+
     public static int [] insertionSort(int [] data) {
         int n = data.length;
         for (int k = 1; k < n; k++) {
@@ -86,7 +113,7 @@ public class Hw5_p7 {
                 data[j] = data[j-1];
                 j--;
             }
-            data[j] = cur; // this is the proper place for cur
+            data[j] = cur;
         }
         return data;
     }
@@ -103,6 +130,13 @@ public class Hw5_p7 {
         }
     }
 
+    /**
+     * The method below divides the given array into two arrays of almost equal length.
+     * If the input array has only less than 2 elements, the array is considered sorted already.
+     * The merge sort is called recursively on each of the subarrays along with the comparator.
+     * Once the entire array is divided, we finally merge these sorted subarray to form the final array.
+     *
+     */
     public static <K> void mergeSort(K[] S, Comparator<K> comp) {
         int n = S.length;
         if (n<2) return;;
@@ -114,7 +148,18 @@ public class Hw5_p7 {
         merge(S1,S2,S,comp);
     }
 
-    //* Source : https://stackabuse.com/heap-sort-in-java/
+     /**
+     * Source : https://stackabuse.com/heap-sort-in-java/
+      *
+      * 1. Build a max heap array using the input array.
+      * 2. Since the max heap stores the largest element of the array at the top
+      * (that is, the beginning of the array), we need to swap it with the last element within the array,
+      * followed by reducing the size of the array (heap) by 1. After that, we heapify the root.
+      * 3. We repeat step 2 as long as the size of our heap is bigger than 1.
+     */
+
+
+
     public static void heapify(int[] array, int length, int i) {
         int left = 2 * i + 1;
         int right = 2 * i + 2;
@@ -137,7 +182,10 @@ public class Hw5_p7 {
             return;
         }
         int length = array.length;
-        // Moving from the first element that isn't a leaf towards the root
+        /**
+         * Moving from the first element that isn't a leaf towards the root
+         */
+
         for (int i = length / 2 - 1; i >= 0; i--) {
             heapify(array, length, i);
 
@@ -150,6 +198,19 @@ public class Hw5_p7 {
             heapify(array, i, 0);
         }
     }
+
+    /**
+     * The quick sort method takes input unsorted array, comparator and two indices the start and end.
+     * The end index is used as a pivot. The end index -1 is the element for end of the array.
+     * The pivot index is used for comparison with other elements. The elements less than pivot are stored in
+     * left, greater than are stored in right and equal to is stored in a seperate array, in case there are
+     * other elements same as pivot.
+     *
+     * Recursively, L and G and sorted. The sorted sub arrays are combined to get the final sorted array.
+     *
+     */
+
+
     public static <K> void quickSort(K[] S, Comparator<K> comp, int a , int b) {
         if(a>=b) return;
         int left = a;
@@ -169,6 +230,11 @@ public class Hw5_p7 {
         quickSort(S, comp, left + 1, b);
     }
 
+    /**
+     * The below two Rand and RandInteger takes range and size as input and returns int or Integer array
+     * to the caller with random numbers generated. The returned array is further used as input
+     * in the various sorting methods in the main function.
+     */
     public static int[] Rand(int range, int size){
         Random rd = new Random();
         int[] arr = new int[size];
