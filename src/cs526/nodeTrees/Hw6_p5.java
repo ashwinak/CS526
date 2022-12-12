@@ -7,7 +7,7 @@ import java.util.*;
 public class Hw6_p5 {
     public static void main(String[] args) throws FileNotFoundException {
         ArrayList<nodeFollow> follower= new ArrayList<>();
-        allFollows("A", follower);
+        allFollows("D", follower);
     }
     public static void allFollows(String n , ArrayList<nodeFollow> follower)throws FileNotFoundException {
         ArrayList<String> followEE;
@@ -56,9 +56,9 @@ public class Hw6_p5 {
                 }
             }
             DFS =false;
-
         }
         HashSet<String> indrFollow = new HashSet<>(indirectFollowEE);
+
         while (true) {
             for (int i=0;i<follower.size();i++) {
                 if (n.equals(follower.get(i).getName())) {
