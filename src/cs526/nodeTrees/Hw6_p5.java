@@ -2,42 +2,50 @@ package cs526.nodeTrees;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.*;
 
 public class Hw6_p5 {
     /**
      * The main function will call the allFollows function with parameters such as
      * follower and its adjaceny list where the search for direct and indirect follower is queried.
-     * A new scanner object reads the file and populates arralist of nodes with each node
+     * A new scanner object reads the file and populates arraylist of nodes with each node
      * pointing to another array list of followees. This method creates the data structure adjacency list
-     * along with a nodeFollow class.
+     * of type nodeFollow class.
      */
     public static void main(String[] args) throws FileNotFoundException {
-        ArrayList<nodeFollow> follower= new ArrayList<>();
-        ArrayList<String> followEE;
-        File graphInput = new File("src/cs526/nodeTrees/follows_input.txt");
-        Scanner s = new Scanner(graphInput);
-        int countP1 = 0;
-        while (s.hasNext()) {
-            String eachLine = s.nextLine();
-            String[] procParse = eachLine.split(",");
-            followEE = new ArrayList<>();
-            for (int i=1; i<procParse.length;i++) {
-                followEE.add(procParse[i]);
+        try {
+            ArrayList<nodeFollow> follower = new ArrayList<>();
+            ArrayList<String> followEE;
+            File graphInput = new File("src/cs526/nodeTrees/follows_input.txt");
+            Scanner s = new Scanner(graphInput);
+            int countP1 = 0;
+            while (s.hasNext()) {
+                String eachLine = s.nextLine();
+                String[] procParse = eachLine.split(",");
+                followEE = new ArrayList<>();
+                for (int i = 1; i < procParse.length; i++) {
+                    followEE.add(procParse[i]);
+                }
+                follower.add(countP1++, new nodeFollow(procParse[0], followEE));
             }
-            follower.add(countP1++,new nodeFollow(procParse[0],followEE));
+            /**
+             * This is the caller of the main function. All tests are done with this input.
+             */
+            allFollows("D", follower);
         }
-        /**
-         * This is the caller of the main function. All tests are done with this input.
-         */
-        allFollows("D", follower);
+        catch (IOException e) {
+            System.out.println();
+            System.out.println("File not Found");
+        }
     }
 
     /**
      * The function below does most of the work. For direct followee's, reading the adj list data structure
-     * is sufficient. For indirect followee's, a DFS approach is taken along with stack push and pop operation.
+     * is sufficient. For indirect followee's, a DFS approach is taken along with stack push and pop operation
+     * to exit out of the DFS walk using while loop.
      */
-    public static void allFollows(String n , ArrayList<nodeFollow> follower)throws FileNotFoundException {
+    public static void allFollows(String n , ArrayList<nodeFollow> follower) {
         for (int i=0;i<follower.size();i++) {
             if (n.equals(follower.get(i).getName())) {
                 System.out.println(n + " directly follows " + follower.get(i).getFollows());
@@ -49,7 +57,7 @@ public class Hw6_p5 {
         ArrayList<String> temp = null;
 
         /**
-         *  This while loop ensures the followee's adj list is stored in a seperate arraylist temp.
+         *  This while loop ensures the followee's adj list is stored in a separate arraylist temp.
          *  The temp is sorted in alphabetically so the nodes are chosen based on which alphabet or name
          *  comes first.
          */
@@ -64,7 +72,7 @@ public class Hw6_p5 {
             }
             /**
              * This for loop ensures the backTrack stack is updated while traversing the graph.
-             * the first level of indirectfollowee for given user is updated by this code.
+             * The first level of indirectfollowee for given user is updated by this code.
              *
              */
             for (int i=0;i<follower.size();i++) {
@@ -132,6 +140,21 @@ public class Hw6_p5 {
                 break;
             }
         }
-        System.out.println(n + " indirectly follows " + indrFollow);
+        String[] indrFollow1 = indrFollow.toArray(new String[indrFollow.size()]);
+        HashSet<String> indrFollowUni = new HashSet<>();
+        for (int i=0;i<indrFollow1.length;i++) {
+            indrFollowUni.add(indrFollow1[i].strip());
+        }
+        for (int i=0;i<follower.size();i++) {
+            if (n.equals(follower.get(i).getName())) {
+                ArrayList<String> temp3 = follower.get(i).getFollows();
+                for (int j=0;j<temp3.size();j++) {
+                    if (indrFollowUni.contains(temp3.get(j).strip())) {
+                        indrFollowUni.remove(temp3.get(j).strip());
+                    }
+                }
+            }
+        }
+        System.out.println(n + " indirectly follows " + indrFollowUni);
     }
 }
