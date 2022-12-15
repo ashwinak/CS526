@@ -55,11 +55,9 @@ public class Process {
     public void setArrival_Time(int arrival_Time) {
         Arrival_Time = arrival_Time;
     }
-
     public void setWait_Time(int wait_Time) {
         Wait_Time = wait_Time;
     }
-
     @Override
     public String toString() {
         return "Id = " + process_id +", priority = " + priority + ", duration = " + Duration +
