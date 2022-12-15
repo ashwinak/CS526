@@ -15,13 +15,29 @@ import java.io.FileWriter;
 
 public class ProcessScheduling {
 
+    /**
+     * The main function creates all the data structures required for this project.
+     * P1 is the arraylist that is going to read input file and store as process objects with
+     * different variables defined in the process class.
+     * P1copy is used to access the original elements of the P1, because when a process is moved from
+     * P1 to PQ a heap adaptable PQ, then the object is removed from P1.
+     *
+     * P1 is the arraylist that reads the input file and stores all the processes as objects.
+     *
+     * PQ is the heap adaptable PQ that will run the highest priority job when it has elements in it.
+     *
+     * The output of the scheduler is also sent as I/O and also sent to a file for write.
+     *
+     * @param args
+     */
+
     public static void main(String[] args) {
         try {
             ArrayList<Process> P1 = new ArrayList<>();
             ArrayList<Process> P1Copy = new ArrayList<>();
             ArrayList<Entry<Integer,Process>> heapPriChange = new ArrayList<>();
             File proc_Input = new File("src/cs526/nodeTrees/process_scheduling_input.txt");
-            FileWriter proc_Output = new FileWriter("process_scheduling_output.txt");
+            FileWriter proc_Output = new FileWriter("src/cs526/nodeTrees/process_scheduling_output.txt");
             Scanner s = new Scanner(proc_Input);
             int countP1 = 0;
             int countP2 = 0;
@@ -49,6 +65,9 @@ public class ProcessScheduling {
                 proc_Output.write("\n");
                 System.out.println(P1.get(i));
             }
+            /**
+             * Initialzing all the variables that will be used in the while loop scheduler.
+             */
             int currTime = 0;
             int maxWaitTime = 30;
             int movedToPQPriority = -1;
@@ -63,11 +82,13 @@ public class ProcessScheduling {
             proc_Output.write("Maximum wait time = " + maxWaitTime +" ");
             proc_Output.write("\n");
             System.out.println("Maximum wait time = " + maxWaitTime +" ");
-
             HeapAdaptablePriorityQueue<Integer, Process> PQ  = new HeapAdaptablePriorityQueue<>();
 
-
-            /** The core scheduler function starts here.
+            /** The core scheduler function starts here. The while loop runs as long as both
+             * PQ and P1 is not empty. P1 will have element removed when the arrival time = curr time.
+             * PQ will execute the process if a given process has the highest priority in the queue.
+             * Once the duration for the given process is ticked down to 0, it will be removed from PQ.
+             * A new hipri process will be selected for execution.
              *
              */
             while (P1.size()!=0 || PQ.size() !=0) {
@@ -81,12 +102,20 @@ public class ProcessScheduling {
                             P1.remove(i);
                         }
                     }
+                    /**
+                     * The P1Copy DS is used to access the original elements of the input file
+                     * Since P1 DS will be pruned as and when the process moves to PQ for execution.
+                     */
                     for (int x =0;x< P1Copy.size();x++) {
                         if(P1Copy.get(x).getArrival_Time()==currTime &&
                                 P1Copy.get(x).getProcess_id()==PQ.min().getValue().getProcess_id()) {
                             print = false;
                         }
                     }
+                    /**
+                     * The print boolean variable is used in an attempt to avoid duplicate prints.
+                     * A hiPRI variable is instantiated and assigned the minkey of the PQ.
+                     */
                     if(PQ.size()!=0 && PQ.min().getKey() != hiPRI && !print) {
                         hiPRI = PQ.min().getKey();
                         proc_Output.write("Now running Process id = " + PQ.min().getValue().getProcess_id());
@@ -112,6 +141,11 @@ public class ProcessScheduling {
 
                     }
                 }
+                /**
+                 * The function below checks for the process that are ticking their wait times
+                 * when waiting in PQ without being executed. When their wait times are = max wait times,
+                 * then the priority of that process is reduced by 1.
+                 */
                 if(PQ.size() !=0) { //&& PQ.min().getValue().getArrival_Time() <=currTime
                     for(Entry<Integer,Process> walkPQ : PQ) {
                         if(walkPQ.getValue().getWait_Time() == maxWaitTime) {
@@ -136,6 +170,10 @@ public class ProcessScheduling {
                                 walkPQ.getValue().setArrival_Time(PQWaitTime);
                                 totalPQWaitTime++;
                             }
+                            /**
+                             * The code below is to ensure the print happens at the right place during premption
+                             * also tries to avoid duplicate prints.
+                             */
                             if(PQ.size()!=0 && PQ.min().getValue().getProcess_id() != hiPRI && !print) {
                                 hiPRI = PQ.min().getValue().getProcess_id();
                                 proc_Output.write("Now running Process id = " + PQ.min().getValue().getProcess_id());
@@ -160,6 +198,11 @@ public class ProcessScheduling {
                                 print = true;
                             }
                         }
+                        /**
+                         *  The code below ensures the wait times are incremented during every while loop run.
+                         *  This is core function that ensures all waiting processes in PQ bump up their priority
+                         *  when its wait time is greater or equal to max wait times.
+                         */
                         if (oldMin !=PQ.min().getValue().getProcess_id() && oldMinDuration !=0 ) {
                             walkPQ.getValue().setWait_Time(walkPQ.getValue().getWait_Time()+1);
                             oldMin = PQ.min().getValue().getProcess_id();
@@ -181,6 +224,11 @@ public class ProcessScheduling {
                             (PQ.min().getValue().getDuration()-1));
                     PQ.min().getValue().setDuration(PQ.min().getValue().getDuration()-1);
                 }
+                /**
+                 * If the duration of the current min process is 0, this means the process is run to completion.
+                 * Its time to print the final stats of that process and remove it from PQ so that the next
+                 * hipri Process executes.
+                 */
                 if(PQ.size() !=0) {
                     if (PQ.min().getValue().getDuration()==0) {
                         proc_Output.write("Finished running Process id = " + PQ.min().getValue().getProcess_id());
@@ -204,6 +252,10 @@ public class ProcessScheduling {
                         System.out.println("at time "  + (currTime));
                         oldMinDuration = PQ.min().getValue().getDuration();
                         PQ.removeMin();
+                        /**
+                         * The code below is a check to ensure the print happens properly during premption or when
+                         * a old process is finished and a new process begins execution.
+                         */
                         if(PQ.size()!=0) {
                             print = true;
                             proc_Output.write("Now running Process id = " + PQ.min().getValue().getProcess_id());
@@ -230,6 +282,9 @@ public class ProcessScheduling {
                 }
                 currTime++;
             }
+            /**
+             * The below code summarizes the full run time of all processes.
+             */
             proc_Output.write("Finished running all processes at time " + (currTime-1));
             proc_Output.write("\n");
             System.out.println("Finished running all processes at time " + (currTime-1));
