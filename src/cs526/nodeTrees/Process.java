@@ -7,14 +7,17 @@ public class Process {
     private int Duration;
     private int Arrival_Time;
 
+    private int Wait_Time;
+
     public Process() {
     }
 
-    public Process(int process_id, int priority, int duration, int arrival_Time) {
+    public Process(int process_id, int priority, int duration, int arrival_Time,int wait_Time) {
         this.process_id = process_id;
         this.priority = priority;
         Duration = duration;
         Arrival_Time = arrival_Time;
+        Wait_Time = wait_Time;
     }
 
     public int getProcess_id() {
@@ -33,6 +36,10 @@ public class Process {
         return Arrival_Time;
     }
 
+    public int getWait_Time() {
+        return Wait_Time;
+    }
+
     public void setProcess_id(int process_id) {
         this.process_id = process_id;
     }
@@ -48,10 +55,14 @@ public class Process {
     public void setArrival_Time(int arrival_Time) {
         Arrival_Time = arrival_Time;
     }
+    public void setWait_Time(int wait_Time) {
+        Wait_Time = wait_Time;
+    }
     @Override
     public String toString() {
         return "Id = " + process_id +", priority = " + priority + ", duration = " + Duration +
-                ", arrival time = " + Arrival_Time + " ";
+                ", arrival time = " + Arrival_Time;
+                //+ ", wait time = " + Wait_Time;
     }
 
 }
