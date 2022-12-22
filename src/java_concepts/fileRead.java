@@ -11,7 +11,7 @@ public class fileRead {
 	public static void main(String[] args) throws IOException {
 		try {
 			FileWriter proc_Output = new FileWriter("CS526/src/java_concepts/routeDump_output.txt");
-			File car_input = new File("CS526/src/java_concepts/routeDump.txt");
+			File car_input = new File("/Users/ashwinak/Downloads/routeDump.txt");
 					Scanner s = new Scanner(car_input);
 			ArrayList<Integer> mask = new ArrayList<>();
 			while (s.hasNext()) {
