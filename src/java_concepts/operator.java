@@ -1,4 +1,4 @@
-package java_concepts;
+package src.java_concepts;
 
 public class operator {
     public static void main (String[] args) {
